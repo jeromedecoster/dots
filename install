@@ -34,6 +34,8 @@ check_sudo() {
     # sudo prompt
     sudo echo >/dev/null
   fi
+  # one more check if the user abort the password question
+  [[ -z `sudo -n uptime 2>/dev/null` ]] && abort 'sudo required'
 }
 
 
