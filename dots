@@ -1,21 +1,43 @@
-#!/usr/bin/env node
-const fs = require('fs')
-const path = require('path')
-const meow = require('meow')
+#!/usr/bin/env bash
 
-const opts = { alias: { 'v': 'version', 'h': 'help' } }
+version=0.1.0
+dir=`dirname $0`
 
-const cli = meow({
-  help: fs.readFileSync(__dirname + '/help')
-}, opts)
+usage() {
+  cat <<EOF
 
-switch(cli.input[0]) {
-  case 'i':
-  case 'install':
-    return console.log('Install !')
-  case 'u':
-  case 'update':
-    return console.log('Update !')
-  default:
-    cli.showHelp()
+  Usage: dots <command>
+
+  Commands:
+
+  i, install              Install dots again
+  u, update               Update the homebrew formulae
+
+EOF
+  exit
 }
+
+while [[ $1 =~ ^- ]]; do
+  case $1 in
+    -v|--version)
+      echo $version
+      exit
+      ;;
+    -h|--help)
+      usage
+      ;;
+  esac
+  shift
+done
+
+case $1 in
+  i|install)
+    bash $dir/install
+    exit
+    ;;
+  u|update)
+    bash $dir/update
+    exit
+    ;;
+  *) usage
+esac
