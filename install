@@ -226,3 +226,6 @@ check_formula git
 check_formula node
 check_user_file .bash_profile
 check_user_file .bashrc
+
+cd /usr/local/lib/dots
+npm i
