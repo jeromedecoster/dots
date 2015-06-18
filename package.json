@@ -1,11 +1,10 @@
 {
-  "name": "dotos",
-  "version": "1.0.0",
+  "name": "dots",
+  "version": "0.1.0",
   "description": "Usage: dots [options] [command] [args ...]\n       dots d",
   "readme": "dots",
   "main": "index.js",
   "dependencies": {
-    "minimist": "^1",
     "meow": "^3"
   },
   "scripts": {
