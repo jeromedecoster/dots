@@ -1,0 +1,9 @@
+Options:
+
+-v, --version           Get the version
+-h, --help              This message
+
+Commands:
+
+i, install              Install dots
+u, update               Update the homebrew formulas

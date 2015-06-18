@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+const fs = require('fs')
+const path = require('path')
+const meow = require('meow')
+
+const opts = { alias: { 'v': 'version', 'h': 'help' } }
+
+const cli = meow({
+  help: fs.readFileSync(__dirname + '/help')
+}, opts)
+
+switch(cli.input[0]) {
+  case 'i':
+  case 'install':
+    return console.log('Install !')
+  case 'u':
+  case 'update':
+    return console.log('Update !')
+  default:
+    cli.showHelp()
+}

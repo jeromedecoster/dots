@@ -1,0 +1,24 @@
+{
+  "name": "dotos",
+  "version": "1.0.0",
+  "description": "Usage: dots [options] [command] [args ...]\n       dots d",
+  "readme": "dots",
+  "main": "index.js",
+  "dependencies": {
+    "minimist": "^1",
+    "meow": "^3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeromedecoster/setup.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeromedecoster/setup/issues"
+  },
+  "homepage": "https://github.com/jeromedecoster/setup#readme"
+}
