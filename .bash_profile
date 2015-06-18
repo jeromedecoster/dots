@@ -1,23 +1,21 @@
-# remove $1 from the $PATH
-path_remove() {
-  # convert path to an array
-  local tmp=$IFS
-  IFS=:
-  local t=($PATH)
-  # remove paths found from the array
-  unset IFS
-  t=(${t[@]%%$1})
-  # echo the result, an array joined with ':'
-  IFS=:
-  echo "${t[*]}"
-  IFS=$tmp
-}
+#
+# Update the $PATH
+#
 
-# set /usr/local/bin before /usr/bin in the $PATH
-PATH=/usr/local/bin:`path_remove /usr/local/bin`
-# add /usr/local/homebrew/bin then ~/.dotfiles/osx/bin to the $PATH
-PATH=/usr/local/homebrew/bin:$PATH
-PATH=~/.dotfiles/osx/bin:$PATH
+# convert the $PATH to an array
+tmp=$IFS
+IFS=:
+t=($PATH)
+# remove /usr/local/bin from the array
+unset IFS
+t=(${t[@]%%/usr/local/bin})
+# reset the $PATH with the array updated joined by ':'
+IFS=:
+PATH="${t[*]}"
+IFS=$tmp
+unset tmp
+unset t
+
+# set local/bin and homebrew/bin at start
+PATH=/usr/local/bin:/usr/local/homebrew/bin:$PATH
 export PATH
-unset -f path_remove
-
