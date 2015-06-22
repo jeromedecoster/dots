@@ -11,7 +11,7 @@ if [[ -z $1 ]]; then
   exit 128
 fi
 
-if [[ -n `git branch --no-color | egrep " $1$"` ]]; then
+if [[ -n `git branch --no-color | sed 's/^..//' | grep "^$1$"` ]]; then
   git checkout $1
 else
   git checkout -b $1

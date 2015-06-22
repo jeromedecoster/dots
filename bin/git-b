@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# abort if not inside a git repo
+if [[ `git rev-parse --is-inside-work-tree 2>/dev/null` != 'true' ]]; then
+  echo 'fatal: Not a git repository (or any of the parent directories): .git' >&2
+  exit 128
+fi
+
+# delete branch
+if [[ $1 == '-d' && $# -gt 1 ]]; then
+  if [[ $2 == 'master' ]]; then
+    echo "error: Cannot delete the branch 'master' with the extension git-b..." >&2
+    exit 1
+  fi
+  # there is only 1 branch
+  if [[ `git branch | sed -n '$='` -eq 1 ]]; then
+    echo "error: Cannot delete the branch '$2' which you are currently on..." >&2
+    exit 1
+  fi
+  # want delete the active branch, switch or create the master branch
+  if [[ `git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\/heads\///'` == $2 ]]; then
+    git co master
+  fi
+  git branch -D $2
+# no branch name, list branches
+elif [[ -z $1 ]]; then
+  git branch
+else
+  git co $1
+fi

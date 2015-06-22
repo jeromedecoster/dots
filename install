@@ -58,6 +58,9 @@ install() {
   rm -f $bin/git-co
   ln -s $lib/dots/bin/git-co $bin/git-co
 
+  rm -f $bin/git-b
+  ln -s $lib/dots/bin/git-b $bin/git-b
+
   # prevent the following error
   # shell-init: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory
   cd ..
