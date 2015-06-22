@@ -119,3 +119,15 @@ prompt() {
 }
 
 PROMPT_COMMAND=prompt
+
+#
+# Alias
+#
+
+alias ..='cd ..'
+alias ...='cd ../..'
+# git aliases...
+alias ga='git add'
+alias gs='git status'
+alias gc='git commit -m'
+alias gco='git co'

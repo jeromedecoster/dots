@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# abort if not inside a git repo
+if [[ `git rev-parse --is-inside-work-tree 2>/dev/null` != 'true' ]]; then
+  echo 'fatal: Not a git repository (or any of the parent directories): .git' >&2
+  exit 128
+fi
+
+if [[ -z $1 ]]; then
+  echo 'usage: git co <name>' >&2
+  exit 128
+fi
+
+if [[ -n `git branch --no-color | egrep " $1$"` ]]; then
+  git checkout $1
+else
+  git checkout -b $1
+fi

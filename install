@@ -1,2 +1,75 @@
 #!/usr/bin/env bash
-curl -s jeromedecoster.github.io/setup/install | bash
+
+#
+# Write colored output
+#
+
+red() {
+  echo -e "\033[0;31m$1\033[0m"
+}
+cyan() {
+  echo -e "\033[0;36m$1\033[0m"
+}
+
+#
+# Abort with an exit message
+#
+
+abort() {
+  echo "`red abort:` $1"
+  # ring
+  echo -en "\007"
+  exit 1
+}
+
+#
+# Ask for sudo access if not already available
+# Note: use `sudo -k` to loose sudo access
+#
+
+check_sudo() {
+  echo "check `cyan sudo`..."
+  # without sudo access return nothing
+  if [[ -z `sudo -n uptime 2>/dev/null` ]]; then
+    # sudo prompt
+    sudo echo >/dev/null
+  fi
+  # one more check if the user abort the password question
+  [[ -z `sudo -n uptime 2>/dev/null` ]] && abort 'sudo required'
+}
+
+install() {
+  echo "install `cyan dots`..."
+  local dir=`mktemp -d /tmp/dots.XXXXX`
+  cd $dir
+  curl -sSL github.com/jeromedecoster/dots/archive/master.tar.gz | tar x --strip 1
+
+  local lib=/usr/local/lib
+  local bin=/usr/local/bin
+  mkdir -p $lib
+  mkdir -p $bin
+
+  rm -rf $lib/dots
+  cp -R $dir/ $lib/dots/
+
+  rm -f $bin/dots
+  ln -s $lib/dots/dots $bin/dots
+
+  rm -f $bin/git-co
+  ln -s $lib/dots/bin/git-co $bin/git-co
+
+  # prevent the following error
+  # shell-init: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory
+  cd ..
+  rm -rf $dir
+
+  bash $lib/dots/update
+}
+
+
+#
+# Run this script
+#
+
+check_sudo
+install
