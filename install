@@ -52,14 +52,11 @@ install() {
   rm -rf $lib/dots
   cp -R $dir/ $lib/dots/
 
-  rm -f $bin/dots
-  ln -s $lib/dots/dots $bin/dots
-
-  rm -f $bin/git-co
-  ln -s $lib/dots/bin/git-co $bin/git-co
-
-  rm -f $bin/git-b
-  ln -s $lib/dots/bin/git-b $bin/git-b
+  # symlink all files from /usr/local/lib/dots/bin to /usr/local/bin
+  ls -1 $lib/dots/bin | while read file; do
+    rm -f $bin/$file
+    ln -s $lib/dots/bin/$file $bin/$file
+  done
 
   # prevent the following error
   # shell-init: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory
