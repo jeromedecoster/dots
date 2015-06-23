@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 version=0.1.0
-dir=`dirname $0`
 
 usage() {
   cat <<EOF
@@ -15,6 +14,26 @@ usage() {
 
 EOF
   exit
+}
+
+#
+# The dirname of the current script
+#
+
+dir() {
+  target=$0
+  cd `dirname $target`
+  target=`basename $target`
+
+  # follow chain of symlinks
+  while [ -L "$target" ]
+  do
+    target=`readlink $target`
+    cd `dirname $target`
+    target=`basename $target`
+  done
+
+  echo `pwd -P`
 }
 
 while [[ $1 =~ ^- ]]; do
@@ -32,11 +51,11 @@ done
 
 case $1 in
   i|install)
-    bash $dir/install
+    bash `dir`/../install
     exit
     ;;
   u|update)
-    bash $dir/update
+    bash `dir`/../update
     exit
     ;;
   *) usage
