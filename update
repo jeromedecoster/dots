@@ -187,30 +187,54 @@ check_formula() {
 }
 
 #
-# Check if `~/.$1` exist. If no, symblink or source the dots version
+# Check if `/usr/local/lib/dots/user/$file` exists in `~/`. If no, symblink or source
 #
 
-check_user_file() {
-  # security test before check
-  [[ $1 != '.bash_profile' && $1 != '.bashrc' ]] && return
-  echo "check `cyan "~/$1"`..."
-  # the file already exist and it's not a symlink
-  if [[ -f ~/$1 && ! -L ~/$1 ]]; then
-  	# do not write in .bashrc
-  	[[ $1 = '.bashrc' ]] && return
-   	# the source line does not exist, insert it
-   	if [[ -z `grep "source /usr/local/lib/dots/$1" < ~/$1` ]]; then
-   	  echo "source `cyan "~/$1"`..."
-      echo "[[ -f /usr/local/lib/dots/$1 ]] && source /usr/local/lib/dots/$1" >> ~/$1
-   	fi
-  else
-  	# if the symlink does not exist or have not the same target, create or overwrite it
-  	if [[ `readlink ~/$1` != "/usr/local/lib/dots/$1" ]]; then
-  	  echo "link `cyan "~/$1"`..."
-      rm -f ~/$1
-      ln -s /usr/local/lib/dots/$1 ~/$1
-  	fi
-  fi
+check_user_files() {
+  local user=/usr/local/lib/dots/user
+  ls -A1 $user | while read file; do
+    echo "check `cyan "~/$file"`..."
+    # the file already exist and it's not a symlink
+    if [[ -f ~/$file && ! -L ~/$file ]]; then
+      # the source line does not exist in the current ~/.bash_profile, insert it
+      if [[ $file = '.bash_profile' && -z `grep "source $user/$file" < ~/$file` ]]; then
+        echo "source `cyan "~/$file"`..."
+        echo "[[ -f $user/$file ]] && source $user/$file" >> ~/$file
+      fi
+    else
+      # if the symlink does not exist or have not the same target, create or overwrite it
+      if [[ `readlink ~/$file` != "$user/$file" ]]; then
+        echo "link `cyan "~/$file"`..."
+        rm -f ~/$file
+        ln -s $user/$file ~/$file
+      fi
+    fi
+  done
+}
+
+#
+# Modify osx defaults behaviors
+#
+
+check_osx_defaults() {
+  echo "check `cyan "osx defaults"`..."
+  # hide the Time Machine and Volume icons from the menu bar
+  for domain in ~/Library/Preferences/ByHost/com.apple.systemuiserver.*; do
+    defaults write "${domain}" dontAutoLoad -array \
+      "/System/Library/CoreServices/Menu Extras/TimeMachine.menu" \
+      "/System/Library/CoreServices/Menu Extras/Volume.menu"
+  done
+  # order the icons
+  defaults write com.apple.systemuiserver menuExtras -array \
+    "/System/Library/CoreServices/Menu Extras/AirPort.menu" \
+    "/System/Library/CoreServices/Menu Extras/Bluetooth.menu" \
+    "/System/Library/CoreServices/Menu Extras/Battery.menu" \
+    "/System/Library/CoreServices/Menu Extras/Clock.menu" \
+    "/System/Library/CoreServices/Menu Extras/User.menu"
+  killall SystemUIServer
+  # show hidden files in the Finder
+  defaults write com.apple.finder AppleShowAllFiles TRUE
+  killall Finder
 }
 
 #
@@ -224,8 +248,8 @@ check_homebrew
 check_command_line_tools
 check_formula git
 check_formula node
-check_user_file .bash_profile
-check_user_file .bashrc
+check_user_files
+check_osx_defaults
 
 # cd /usr/local/lib/dots
 # npm i

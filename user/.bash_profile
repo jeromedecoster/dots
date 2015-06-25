@@ -31,11 +31,12 @@ prompt_git() {
 
   local BLU='\033[0;34m'
   local GRE='\033[0;32m'
+  local PIN='\033[0;35m'
   local RED='\033[0;31m'
   local YEL='\033[0;33m'
   local RES='\033[0m'
 
-  local branch="${BLU}`git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\/heads\///'`\[${RES}\]"
+  local branch="${PIN}`git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\/heads\///'`\[${RES}\]"
 
   # check for staged, modified or untracked files
   local sta mod unt
@@ -130,6 +131,7 @@ alias ...='cd ../..'
 alias ga='git add'
 alias gs='git status'
 alias gc='git commit -m'
+alias gl="git log --pretty='format:%Cgreen%h%Creset %an - %s' --graph"
 alias gpom='git push origin master'
 alias gb='git b'
 alias gbd='git b -d'
