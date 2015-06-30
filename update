@@ -171,7 +171,7 @@ check_command_line_tools() {
 
 check_formula() {
   echo "check `cyan "homebrew $1"`..."
-  # `$1`not found, install it
+  # `$1` not found, install it
   if [[ -z `brew ls -1 | grep ^$1$` ]]; then
     echo "install `cyan "$1"` with homebrew..."
     brew install "$1"
@@ -183,6 +183,50 @@ check_formula() {
       # remove previous version
       brew cleanup
     fi
+  fi
+}
+
+#
+# Check if homebrew cask is already installed. Then install or update it
+#
+
+check_cask() {
+  echo "check `cyan brew-cask`..."
+  # brew-cask not found, install it
+  if [[ -z `brew ls -1 | grep ^brew-cask$` ]]; then
+    echo "install `cyan brew-cask` with homebrew..."
+    brew install caskroom/cask/brew-cask
+  else
+    # brew-cask found, but need an upgrade
+    if [[ `brew outdated | grep ^brew-cask$` ]]; then
+      echo "upgrade `cyan "homebrew brew-cask"`..."
+      brew upgrade brew-cask
+      # remove previous version
+      brew cleanup
+      brew cask cleanup
+    fi
+  fi
+  echo "check `cyan /Developer/Applications`..."
+  # casks will be installed inside /Developer/Applications
+  # the default path is /opt/homebrew-cask/Caskroom
+  if [[ ! -d /Developer/Applications ]]; then
+    mkdir -p /Developer/Applications
+  elif [[ `stat -f %u /Developer/Applications` != `id -u` ]]; then
+    echo "chown `cyan /Developer/Applications` owner..."
+    sudo chown `whoami` /Developer/Applications
+  fi
+}
+
+#
+# Check if `$1` was installed with homebrew cask. Then install it or do nothing
+#
+
+check_cask_formula() {
+  echo "check `cyan "homebrew cask $1"`..."
+  # `$1` not found, install it
+  if [[ -z `brew cask ls -1 --caskroom=/Developer/Applications | grep ^$1$` ]]; then
+    echo "install `cyan "$1"` with homebrew cask..."
+    brew cask install --caskroom=/Developer/Applications "$1"
   fi
 }
 
@@ -282,6 +326,11 @@ check_homebrew
 check_command_line_tools
 check_formula git
 check_formula node
+check_cask
+check_cask_formula qlcolorcode
+check_cask_formula qlmarkdown
+check_cask_formula qlstephen
+check_cask_formula quicklook-json
 check_user_files
 check_osx_defaults
 
