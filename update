@@ -217,28 +217,40 @@ check_user_files() {
 #
 
 check_osx_defaults() {
+
+  #
+  # Inner functions
+  #
+
+  function autoload {
+    defaults -currentHost read com.apple.systemuiserver dontAutoLoad |
+    sed -e 's/.*[\/()]//' -e 's/\.menu[",]*$//' -e '/^$/d' |
+    tr '\n' ' ' | sed 's/ $//'
+  }
+  function menuextras {
+    defaults read com.apple.systemuiserver menuExtras |
+    sed -e 's/.*[\/()]//' -e 's/\.menu[",]*$//' -e '/^$/d' |
+    tr '\n' ' ' | sed 's/ $//'
+  }
+
+  #
+  # Script
+  #
+
   echo "check `cyan "osx defaults"`..."
   # hide the Time Machine and Volume icons from the menu bar
   local dirty=
-  local wanted='TimeMachine
-Volume'
-  local current=`defaults -currentHost read com.apple.systemuiserver dontAutoLoad \
-    | sed -e 's/.*[\/()]//' -e 's/\.menu[",]*$//' -e '/^$/d'`
-  if [[ "$current" != "$wanted" ]]; then
+  if [[ `autoload` != 'TimeMachine Volume' ]]; then
+    echo "modify `cyan "systemuiserver autoload"`..."
     defaults -currentHost write com.apple.systemuiserver dontAutoLoad -array \
       "/System/Library/CoreServices/Menu Extras/TimeMachine.menu" \
       "/System/Library/CoreServices/Menu Extras/Volume.menu"
     dirty=1
   fi
+
   # order the icons in the menu bar
-  local wanted='AirPort
-Bluetooth
-Battery
-Clock
-User'
-  local current=`defaults read com.apple.systemuiserver menuExtras \
-  | sed -e 's/.*[\/()]//' -e 's/\.menu[",]*$//' -e '/^$/d'`
-  if [[ "$current" != "$wanted" ]]; then
+  if [[ `menuextras` != 'AirPort Bluetooth Battery Clock User' ]]; then
+    echo "modify `cyan "systemuiserver menuExtras"`..."
     defaults write com.apple.systemuiserver menuExtras -array \
       "/System/Library/CoreServices/Menu Extras/AirPort.menu" \
       "/System/Library/CoreServices/Menu Extras/Bluetooth.menu" \
@@ -248,11 +260,15 @@ User'
     dirty=1
   fi
   [[ -n $dirty ]] && killall SystemUIServer
+
   # show hidden files in the Finder
   if [[ `defaults read com.apple.finder AppleShowAllFiles` != 'TRUE' ]]; then
+    echo "modify `cyan "finder showAllFiles"`..."
     defaults write com.apple.finder AppleShowAllFiles TRUE
     killall Finder
   fi
+  unset -f autoload
+  unset -f menuextras
 }
 
 #
