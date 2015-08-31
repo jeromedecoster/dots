@@ -65,7 +65,6 @@ install() {
   # shell-init: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory
   cd ../..
   rm -rf $dir
-  exit 123
   bash $lib/dots/update
 }
 
