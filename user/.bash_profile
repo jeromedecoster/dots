@@ -122,12 +122,12 @@ prompt() {
 PROMPT_COMMAND=prompt
 
 #
-# Alias
+# Aliases
 #
 
 alias ..='cd ..'
 alias ...='cd ../..'
-# git aliases...
+# git
 alias ga='git add'
 alias gs='git status'
 alias gc='git commit -m'
@@ -136,3 +136,10 @@ alias gpom='git push origin master'
 alias gb='git b'
 alias gbd='git b -d'
 alias gco='git co'
+# npm
+alias ni='npm install'
+alias nid='npm install --save'
+alias nidd='npm install --save-dev'
+alias nr='npm run-script'
+alias ns='npm start'
+alias nt='npm test'

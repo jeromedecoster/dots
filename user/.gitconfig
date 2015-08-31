@@ -5,3 +5,5 @@
   branch = magenta
 [url "https://"]
   insteadOf = git://
+[core]
+  excludesfile = ~/.gitignore

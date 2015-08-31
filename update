@@ -174,7 +174,7 @@ check_formula() {
   # `$1` not found, install it
   if [[ -z `brew ls -1 | grep ^$1$` ]]; then
     echo "install `cyan "$1"` with homebrew..."
-    brew install "$1"
+    brew install "$@"
   else
     # `$1` found, but need an upgrade
     if [[ `brew outdated | grep ^$1` ]]; then
@@ -326,6 +326,7 @@ check_homebrew
 check_command_line_tools
 check_formula git
 check_formula node
+check_formula ffmpeg --with-ffplay --with-opus --with-theora --with-webp
 check_cask
 check_cask_formula qlcolorcode
 check_cask_formula qlmarkdown

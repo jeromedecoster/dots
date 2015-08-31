@@ -42,15 +42,18 @@ install() {
   echo "install `cyan dots`..."
   local dir=`mktemp -d /tmp/dots.XXXXX`
   cd $dir
-  curl -sSL github.com/jeromedecoster/dots/archive/master.tar.gz | tar x --strip 1
 
+  # clone minimal dots (without all repository history)
+  [[ -z `type -P git` ]] && abort 'git must be installed'
+  git clone --depth 1 https://github.com/jeromedecoster/dots.git
   local lib=/usr/local/lib
   local bin=/usr/local/bin
   mkdir -p $lib
   mkdir -p $bin
 
   rm -rf $lib/dots
-  cp -R $dir/ $lib/dots/
+  cd ./dots
+  git checkout-index --prefix=$lib/dots/ --all
 
   # symlink all files from /usr/local/lib/dots/bin to /usr/local/bin
   ls -1 $lib/dots/bin | while read file; do
@@ -60,9 +63,9 @@ install() {
 
   # prevent the following error
   # shell-init: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory
-  cd ..
+  cd ../..
   rm -rf $dir
-
+  exit 123
   bash $lib/dots/update
 }
 
